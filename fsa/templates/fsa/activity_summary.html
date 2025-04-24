@@ -1,0 +1,107 @@
+{% extends 'fsa/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="fa fa-list-alt me-2"></i>
+                活動摘要
+            </h4>
+        </div>
+        <div class="card-body">
+            <!-- 月度總結 -->
+            <div class="alert alert-info mb-4">
+                <h5 class="alert-heading mb-3">
+                    <i class="fa fa-bar-chart me-2"></i>
+                    本月總結
+                </h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="mb-1"><strong>活動總數：</strong> {{  total_activities }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-1"><strong>參與人數總計：</strong> {{ total_participants }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-1"><strong>場次總計：</strong> {{ total_sessions }}</p>
+                </div>
+            </div>
+            </div>
+
+            <!-- 篩選部分 -->
+            <div class="filter-box mb-4">
+                <form method="get" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label"><i class="fa fa-calendar me-1"></i>月份</label>
+                        <input type="month" name="month" class="form-control" value="{{ selected_month }}">
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label class="form-label"><i class="fas fa-user-tie me-1"></i>社工</label>
+                        <select name="social_worker" class="form-select">
+                            <option value="" {% if selected_social_worker == "" %}selected{% endif %}>全部社工</option>
+                            {% for worker in social_workers %}
+                            <option value="{{ worker.id }}" 
+                                {% if worker.id|stringformat:"s" == selected_social_worker %}selected{% endif %}>
+                                {{ worker.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label class="form-label"><i class="fas fa-tags me-1"></i>類別</label>
+                        <select name="category" class="form-select">
+                            <option value="">全部</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" 
+                                    {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+                                    {{ category.category_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa fa-sliders me-2"></i>篩選
+                        </button>
+                        <a href="?" class="btn btn-outline-secondary ms-2 px-4">
+                            <i class="fa fa-refresh me-2"></i>重置
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 活動列表 -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th><i class="fa fa-list-alt me-2"></i>活動名稱</th>
+                            <th><i class="fa fa-user-md me-2"></i>社工</th>
+                            <th><i class="fa fa-tags me-2"></i>類別</th>
+                            <th><i class="fa fa-users me-2"></i>參與人數</th>
+                            <th><i class="fa fa-clock-o me-2"></i>場次</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities %}
+                        <tr>
+                            <td><i class="fa fa-list-alt me-2"></i>{{ activity.title }}</td>
+                            <td><i class="fa fa-user-md me-2"></i>{{ activity.social_worker.name }}</td>
+                            <td><i class="fa fa-tags me-2"></i>{{ activity.categories.category_name }}</td>
+                            <td><i class="fa fa-users me-2"></i>{{ activity.participant_num }}</td>
+                            <td><i class="fa fa-clock-o me-2"></i>{{ activity.total_sessions }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
